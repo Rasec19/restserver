@@ -7,11 +7,17 @@ const Usuario = require('../models/usuario');
 const usuariosGet = async(req = request, res = response) => {
     
     const { limit = 5, desde = 0 } = req.query; 
-    const usuarios = await Usuario.find()
-        .skip( Number(desde) )
-        .limit( Number(limit) );
+    const query = {estado: true};
+
+    const [ total, usuarios ] = await Promise.all([
+        Usuario.countDocuments(query),
+        Usuario.find(query)
+            .skip( Number(desde) )
+            .limit( Number(limit) )
+    ]);
 
     res.status(200).json({
+        total,
         usuarios
     });
 }
@@ -55,11 +61,16 @@ const usuariosPatch = (req, res = response) => {
     });
 }
 
-const usuariosDelete = (req, res = response) => {
+const usuariosDelete = async (req, res = response) => {
 
-    res.json({
-        msg: 'delete API - controlador'
-    });
+    const { id } = req.params;
+
+    // Fisicamente lo borramos
+    // const usuario = await Usuario.findByIdAndDelete(id);
+
+    const usuario = await Usuario.findByIdAndUpdate( id, { estado: false } );
+
+    res.json(usuario);
 }
 
 
