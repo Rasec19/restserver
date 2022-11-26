@@ -1,10 +1,10 @@
-const { Router, response } = require('express');
+const { Router } = require('express');
 const { check } = require('express-validator');
 
 
-const { validarCampos } = require('../middlewares/validar-campos');
+const { validarCampos, validarJWT } = require('../middlewares');
 
-const { login, googleSignin } = require('../controllers/auth');
+const { crearCategoria } = require('../controllers/categorias');
 
 const router = Router();
 
@@ -23,9 +23,11 @@ router.get('/:id', (req, res) => {
 });
 
 // Crear categoría - privado - cualquiera persona con un token valido
-router.post('/', (req, res) => {
-    res.json('POST')
-});
+router.post('/', [ 
+    validarJWT,
+     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+     validarCampos, 
+    ], crearCategoria);
 
 // Actulizar un registro por id - privado - cualquiera con token valido
 router.put('/:id', (req, res) => {
