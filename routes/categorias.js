@@ -6,7 +6,7 @@ const { validarCampos, validarJWT } = require('../middlewares');
 
 const { existeCategoriaPorId } = require('../helpers/db-validators');
 
-const { crearCategoria, obtenerCategorias, obtenerCategoria, actualizarCategoria } = require('../controllers/categorias');
+const { crearCategoria, obtenerCategorias, obtenerCategoria, actualizarCategoria, borrarCategoria } = require('../controllers/categorias');
 
 const router = Router();
 
@@ -41,9 +41,10 @@ router.put('/:id', [
 ],actualizarCategoria);
 
 // Borra una categoría - ADMIN
-router.delete('/:id', (req, res) => {
-    res.json('DELETE')
-});
+router.delete('/:id', [
+    check('id', 'No es un ID valido').isMongoId(),
+    check('id').custom( existeCategoriaPorId ),
+], borrarCategoria);
 
 
 

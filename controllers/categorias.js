@@ -118,6 +118,24 @@ const actualizarCategoria = async (req, res = response) => {
 };
 
 //borrarCategoria - estado:false
+const borrarCategoria = async (req, res = response) => {
+    
+    try {
+        const { id } = req.params;
+
+        const categoria = await Categoria.findByIdAndUpdate( id, { estado: false } );
+
+        res.status(200).json(categoria);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            error,
+            msg: 'Error en el servidor al eliminar una categoria',
+        });
+    }
+
+};
 
 
 module.exports = {
@@ -125,4 +143,5 @@ module.exports = {
     obtenerCategorias,
     obtenerCategoria,
     actualizarCategoria,
+    borrarCategoria,
 };
