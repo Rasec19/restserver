@@ -90,6 +90,32 @@ const crearCategoria = async ( req, res = response ) => {
 };
 
 // actualizarCategoria
+const actualizarCategoria = async (req, res = response) => {
+
+    try {
+        const { id } = req.params;
+        const nombre = req.body.nombre.toUpperCase();
+
+        const data = {
+            nombre,
+            // usuario: req.usuario._id,
+        };
+
+        const categoria = await Categoria.findByIdAndUpdate(id, data);
+
+        res.status(200).json({
+            categoria
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            error,
+            msg: 'Erro en el servidor al actualizar una categoria',
+        });
+    }
+
+};
 
 //borrarCategoria - estado:false
 
@@ -98,4 +124,5 @@ module.exports = {
     crearCategoria,
     obtenerCategorias,
     obtenerCategoria,
+    actualizarCategoria,
 };
