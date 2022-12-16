@@ -1,9 +1,56 @@
-const { response } = require("express");
+const { response, request } = require("express");
 const {  Categoria } = require("../models");
 
 // obtenerCategorias - paginado - total - populate
+const obtenerCategorias = async (req = request, res = response) => {
+    
+    try {
+        const { limit = 5, desde = 0} = req.query;
+        const query = { estado:true };
+
+        const [ total, categorias ] = await Promise.all([
+            Categoria.countDocuments(query),
+            Categoria.find(query)
+                .skip( Number(desde) )
+                .limit( Number(limit) ),
+        ]);
+
+        res.status(200).json({
+            total,
+            categorias,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            error,
+            msg: 'Erro en els ervidor al buscar categorias'
+        });
+    }
+
+};
 
 // obtenerCategoria - populate {}
+const obtenerCategoria = async (req = request, res = response) => {
+    
+    try {
+
+        const { id } = req.params;
+
+        const categoria = await Categoria.findById(id);
+
+        res.status(200).json({
+            categoria
+        });
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            error,
+            msg: 'Error del servidor al buscar categoria',
+        });
+    }
+
+};
 
 const crearCategoria = async ( req, res = response ) => {
 
@@ -19,7 +66,7 @@ const crearCategoria = async ( req, res = response ) => {
             });
         }
 
-        // Generar la dat a guardar
+        // Generar la data a guardar
         const data = {
             nombre,
             usuario: req.usuario._id
@@ -48,4 +95,6 @@ const crearCategoria = async ( req, res = response ) => {
 
 module.exports = {
     crearCategoria,
+    obtenerCategorias,
+    obtenerCategoria,
 };
