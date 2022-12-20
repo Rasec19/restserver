@@ -1,15 +1,13 @@
+const path = require('path');
+const fs   = require('fs');
+
 const { response, request } = require('express');
-const { subirArchivo } = require('../helpers');
+const { subirArchivo, limpiarImagenes }      = require('../helpers');
 
 const { Usuario, Producto } = require('../models');
-const { model } = require('mongoose');
 
 
 const cargarArchivo = async ( req = request, res = response ) => {
-
-    if (!req.files || Object.keys(req.files).length === 0 || !req.files.archivo) {
-        return res.status(400).json({msg: 'No hay archivos que subir'});
-    }
 
     try {
 
@@ -38,8 +36,6 @@ const actualizarImagen = async ( req = request, res = response ) => {
                     msg: `No existe un usuario con el id ${id}`
                 });
             }
-
-
             break;
         
         case 'productos':
@@ -49,13 +45,14 @@ const actualizarImagen = async ( req = request, res = response ) => {
                     msg: `No existe un producto con el id ${id}`
                 });
             }
-
-
             break;
     
         default:
             return res.status(500).json({msg: 'Se me olvido validar esto'})
     }
+
+    //Limpiar imagenes previas
+    limpiarImagenes(modelo.img, coleccion);
 
     const nombre = await subirArchivo( req.files, undefined, coleccion );
     modelo.img = nombre;

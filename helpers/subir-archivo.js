@@ -1,4 +1,5 @@
 const path = require('path');
+const fs   = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
 const subirArchivo = ( files, extensionesValidas = ['png', 'jpg', 'jpeg', 'gif'], carpeta = '' ) => {
@@ -29,7 +30,19 @@ const subirArchivo = ( files, extensionesValidas = ['png', 'jpg', 'jpeg', 'gif']
     
 };
 
+const limpiarImagenes = (modeloImg = '', coleccion = '') => {
+
+    if ( modeloImg ) {
+        // Hay que borrar la imagen del servidor
+        const pathImagen = path.join( __dirname, '../uploads', coleccion, modeloImg );
+        if (fs.existsSync( pathImagen )) {
+            fs.unlinkSync( pathImagen );
+        }
+    }
+};
+
 
 module.exports = {
-    subirArchivo
+    subirArchivo,
+    limpiarImagenes,
 };
