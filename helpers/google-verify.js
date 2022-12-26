@@ -7,9 +7,9 @@ async function googleVerify( token = '' ) {
 
     const ticket = await client.verifyIdToken({
         idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
+        // audience: process.env.GOOGLE_CLIENT_ID,
     });
-
+    
     const payload = ticket.getPayload();
     
     const { name, picture, email } = payload;
